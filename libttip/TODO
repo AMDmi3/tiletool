@@ -1,0 +1,12 @@
+TODO
+====
+
+o Add inplace implementations of some operations
+o Add JPEG r/w support
+o Optimize PNG saving so optipng postprocess is unneeded
+  o Indexed color support
+  o Add RGB -> indexed conversion
+  o Add lossy RGB -> indexed conversion
+o More documentation and comments
+o Better error handling
+o C++ wrapper

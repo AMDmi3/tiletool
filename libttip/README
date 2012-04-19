@@ -1,0 +1,55 @@
+                                libttip
+                               =========
+
+  libttip stands for TileTool Image Processing library. It's minimalistic
+  library to perform basic transformations on map tiles. Library is intended
+  to be used in tiletool, but is also ready for standalone usage in third
+  party projects.
+
+Features
+========
+
+  - png format reading/writing
+  - basic getpixel/setpixel operations
+  - rgb->grayscale conversion
+  - combining 4 similar images into one with 2x downscaling
+  - alpha blending
+
+Example
+=======
+
+  /* convert an image to grayscale */
+
+  #include <ttip.h>
+
+  int main() {
+      ttip_image_t source, grayscale;
+
+      /* load PNG image */
+      if ((ret = ttip_loadpng(&source, "input.png")) != TTIP_OK)
+          return 1;
+
+      /* convert to grayscale producing new image */
+      if ((ret = ttip_desaturate(&grayscale, source)) != TTIP_OK)
+          return 1;
+
+      /* save grayscale image */
+      if ((ret = ttip_savepng(source, "output.png")) != TTIP_OK)
+          return 1;
+
+      /* cleanup */
+      ttip_destroy(&source);
+      ttip_destroy(&grayscale);
+
+      return 0;
+  }
+
+License
+=======
+
+  GNU LGPLv3, see COPYING
+
+Author
+======
+
+  Dmitry Marakasov <amdmi3@amdmi3.ru>
