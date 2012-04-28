@@ -45,7 +45,7 @@ typedef enum {
 	TTIP_EUNSUPPNG = -4,
 	TTIP_EDISABLED = -5,
 
-	TTIP_LAST_ERROR = -6,
+	TTIP_LAST_ERROR = -5,
 } ttip_result_t;
 
 /* opaque type for single tile */
