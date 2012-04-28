@@ -20,6 +20,17 @@ Features
   - Merging several tilesets together
   - Running arbitrary commands on tiles
 
+Building
+========
+
+  Only required dependencies are cmake and libpng. To compile:
+
+    cmake . && make
+
+  To run tests, after building run:
+
+    ctest
+
 Usage
 =====
 
