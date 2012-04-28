@@ -24,6 +24,7 @@
 #include "testing.h"
 
 BEGIN_TEST()
+#ifdef HAVE_FORK
 	EXPECT_TRUE(get_nchilds() == 0);
 
 	if (fork_child())
@@ -51,4 +52,5 @@ BEGIN_TEST()
 
 	EXPECT_TRUE(wait_child());
 	EXPECT_TRUE(wait_all_childs() == 2);
+#endif
 END_TEST()
