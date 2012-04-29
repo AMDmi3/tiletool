@@ -70,10 +70,10 @@ static struct option longopts[] = {
 	{ "jobs",          required_argument, NULL, 'j' },
 	{ "overlay",       required_argument, NULL, 'l' },
 	{ "postcmd",       required_argument, NULL, 'c' },
-	{ "help",          required_argument, NULL, 'h' },
-	{ "verbose",       required_argument, NULL, 'v' },
 	{ "input",         required_argument, NULL, 'i' },
 	{ "output",        required_argument, NULL, 'o' },
+	{ "help",          no_argument,       NULL, 'h' },
+	{ "verbose",       no_argument,       NULL, 'v' },
 	{ NULL,            0,                 NULL, 0 },
 };
 
