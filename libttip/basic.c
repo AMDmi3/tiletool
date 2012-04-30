@@ -24,20 +24,14 @@
 #include <ttip_int.h>
 
 ttip_result_t ttip_create(ttip_image_t* output, int width, int height, ttip_format_t format) {
-	if (width <= 0) {
-		TTIP_VERROR("width <= 0");
-		return EINVAL;
-	}
+	if (width <= 0)
+		return TTIP_BAD_DIMENSIONS;
 
-	if (height <= 0) {
-		TTIP_VERROR("height <= 0");
-		return EINVAL;
-	}
+	if (height <= 0)
+		return TTIP_BAD_DIMENSIONS;
 
-	if ( ttip_getbpp(format) == 0) {
-		TTIP_VERROR("bad pixel format");
-		return EINVAL;
-	}
+	if (ttip_getbpp(format) == 0)
+		return TTIP_BAD_PIXEL_FORMAT;
 
 	size_t stridesize = ttip_alignstride(width * ttip_getbpp(format));
 
@@ -75,16 +69,24 @@ void ttip_destroy(ttip_image_t* tile) {
 
 const char* ttip_strerror(ttip_result_t error) {
 	switch (error) {
-	case TTIP_EPNGINIT:
-		return "libpng initialization failed";
-	case TTIP_EPNG:
-		return "error during libpng input/output";
-	case TTIP_ENOIMPL:
-		return "functionality not implemented";
-	case TTIP_EUNSUPPNG:
-		return "unsupported png file format";
-	case TTIP_EDISABLED:
-		return "feature not compiled in";
+	case TTIP_LIBPNG_INIT_FAILED:
+		return "Libpng initialization failed";
+	case TTIP_LIBPNG_ERROR:
+		return "Error during libpng input/output";
+	case TTIP_NOT_IMPLEMENTED:
+		return "Functionality not (yet) implemented";
+	case TTIP_IMAGE_FORMAT_NOT_SUPPORTED:
+		return "Image format not supported";
+	case TTIP_NOT_COMPILED_IN:
+		return "Feature not compiled in";
+	case TTIP_BAD_DIMENSIONS:
+		return "Bad image demensions";
+	case TTIP_BAD_PIXEL_FORMAT:
+		return "Bad pixel format";
+	case TTIP_IMAGE_FORMAT_MISMATCH:
+		return "Image format mismatch";
+	case TTIP_EVEN_DIMENSIONS_REQUIRED:
+		return "Even dimensions required";
 	default:
 		return strerror(error);
 	}

@@ -22,13 +22,6 @@
 
 #include <sys/types.h>
 
-#ifdef WITH_VERBOSE
-#include <stdio.h>
-#define TTIP_VERROR(fmt,...) fprintf(stderr, "%s: " fmt "\n", __FUNCTION__, ## __VA_ARGS__);
-#else
-#define TTIP_VERROR(...) do {} while(0)
-#endif
-
 #include <ttip.h>
 
 #define TTIP_ALIGN_BITS 2

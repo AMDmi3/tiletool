@@ -23,7 +23,7 @@
 
 ttip_result_t ttip_threshold(ttip_image_t* output, ttip_image_t source, int value) {
 	if (source->format != TTIP_GRAY && source->format != TTIP_RGB)
-		return EINVAL;
+		return TTIP_BAD_PIXEL_FORMAT;
 
 	/* allocate tile */
 	int ret;

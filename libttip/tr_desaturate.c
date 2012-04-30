@@ -40,7 +40,7 @@ ttip_result_t ttip_desaturate(ttip_image_t* output, ttip_image_t source) {
 		dststep = 2;
 		break;
 	default:
-		return EINVAL;
+		return TTIP_BAD_PIXEL_FORMAT;
 	}
 
 	/* allocate tile */

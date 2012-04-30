@@ -22,32 +22,23 @@
 #include <ttip_int.h>
 
 ttip_result_t ttip_maskblend(ttip_image_t* output, ttip_image_t background, ttip_image_t overlay) {
-	if (background->width != overlay->width) {
-		TTIP_VERROR("background and overlay widths don't match");
-		return EINVAL;
-	}
+	if (background->width != overlay->width)
+		return TTIP_IMAGE_FORMAT_MISMATCH;
 
-	if (background->height != overlay->height) {
-		TTIP_VERROR("background and overlay heights don't match");
-		return EINVAL;
-	}
+	if (background->height != overlay->height)
+		return TTIP_IMAGE_FORMAT_MISMATCH;
 
 	switch (background->format) {
 	case TTIP_GRAY:
-		if (overlay->format != TTIP_GRAY_ALPHA) {
-			TTIP_VERROR("background and overlay formats don't match (only TTIP_GRAY_ALPHA overlay allowed for TTIP_GRAY background)");
-			return EINVAL;
-		}
+		if (overlay->format != TTIP_GRAY_ALPHA)
+			return TTIP_IMAGE_FORMAT_MISMATCH;
 		break;
 	case TTIP_RGB:
-		if (overlay->format != TTIP_RGB_ALPHA) {
-			TTIP_VERROR("background and overlay formats don't match (only TTIP_RGB_ALPHA overlay allowed for TTIP_RGB background)");
-			return EINVAL;
-		}
+		if (overlay->format != TTIP_RGB_ALPHA)
+			return TTIP_IMAGE_FORMAT_MISMATCH;
 		break;
 	default:
-		TTIP_VERROR("unsupported background format (background with alpha?)");
-		return EINVAL;
+		return TTIP_BAD_PIXEL_FORMAT;
 	}
 
 	/* allocate tile */

@@ -35,18 +35,18 @@ ttip_result_t ttip_savepng(ttip_image_t source, const char* filename, int level)
 		return errno;
 
 	if ((png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL)) == NULL)
-		return TTIP_EPNGINIT;
+		return TTIP_LIBPNG_INIT_FAILED;
 
 	if ((info_ptr = png_create_info_struct(png_ptr)) == NULL) {
 		png_destroy_write_struct(&png_ptr, NULL);
-		return TTIP_EPNGINIT;
+		return TTIP_LIBPNG_INIT_FAILED;
 	}
 
 	if (setjmp(png_jmpbuf(png_ptr))) {
 		png_destroy_write_struct(&png_ptr, &info_ptr);
 		fclose(f);
 		unlink(filename);
-		return TTIP_EPNG;
+		return TTIP_LIBPNG_ERROR;
 	}
 
 	png_init_io(png_ptr, f);
@@ -75,7 +75,7 @@ ttip_result_t ttip_savepng(ttip_image_t source, const char* filename, int level)
 
 	return TTIP_OK;
 #else
-	return TTIP_EDISABLED;
+	return TTIP_NOT_COMPILED_IN;
 #endif
 }
 
@@ -90,11 +90,11 @@ ttip_result_t ttip_loadpng(ttip_image_t* output, const char* filename) {
 		return errno;
 
 	if ((png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL)) == NULL)
-		return TTIP_EPNGINIT;
+		return TTIP_LIBPNG_INIT_FAILED;
 
 	if ((info_ptr = png_create_info_struct(png_ptr)) == NULL) {
 		png_destroy_read_struct(&png_ptr, NULL, NULL);
-		return TTIP_EPNGINIT;
+		return TTIP_LIBPNG_INIT_FAILED;
 	}
 
 	if (setjmp(png_jmpbuf(png_ptr))) {
@@ -102,7 +102,7 @@ ttip_result_t ttip_loadpng(ttip_image_t* output, const char* filename) {
 		fclose(f);
 		if (destination != NULL)
 			ttip_destroy(&destination);
-		return TTIP_EPNG;
+		return TTIP_LIBPNG_ERROR;
 	}
 
 	png_init_io(png_ptr, f);
@@ -131,7 +131,7 @@ ttip_result_t ttip_loadpng(ttip_image_t* output, const char* filename) {
 	if (format == 0 || interlace_method != 0 || ttip_create(&destination, width, height, format) != TTIP_OK) {
 		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 		fclose(f);
-		return TTIP_EUNSUPPNG;
+		return TTIP_IMAGE_FORMAT_NOT_SUPPORTED;
 	}
 
 	assert(destination->stride >= (int)png_get_rowbytes(png_ptr, info_ptr));
@@ -148,6 +148,6 @@ ttip_result_t ttip_loadpng(ttip_image_t* output, const char* filename) {
 
 	return TTIP_OK;
 #else
-	return TTIP_EDISABLED;
+	return TTIP_NOT_COMPILED_IN;
 #endif
 }

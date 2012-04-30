@@ -8,5 +8,4 @@ o Optimize PNG saving so optipng postprocess is unneeded
   o Add RGB -> indexed conversion
   o Add lossy RGB -> indexed conversion
 o More documentation and comments
-o Better error handling
 o C++ wrapper
