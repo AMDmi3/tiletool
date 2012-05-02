@@ -1,4 +1,4 @@
-PROJECT(tiletool)
+PROJECT(tiletool C)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0)
 
