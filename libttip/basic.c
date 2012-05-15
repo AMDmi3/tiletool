@@ -46,8 +46,6 @@ ttip_result_t ttip_create(ttip_image_t* output, int width, int height, ttip_form
 		return saved_errno;
 	}
 
-	memset(data, 0, stridesize * height);
-
 	newtile->width = width;
 	newtile->height = height;
 	newtile->stride = stridesize;

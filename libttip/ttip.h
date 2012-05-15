@@ -81,7 +81,7 @@ void ttip_setpixel(ttip_image_t tile, int x, int y, ttip_color_t color);
 ttip_color_t ttip_getpixel(ttip_image_t tile, int x, int y);
 
 /* hilevel pixel operations */
-//ttip_result_t ttip_fill(ttip_image_t tile, ttip_color_t color);
+ttip_result_t ttip_clear(ttip_image_t target);
 
 /* png input/output */
 ttip_result_t ttip_loadpng(ttip_image_t* output, const char* filename);
