@@ -34,11 +34,14 @@ ttip_result_t ttip_savepng(ttip_image_t source, const char* filename, int level)
 	if ((f = fopen(filename, "wb")) == NULL)
 		return errno;
 
-	if ((png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL)) == NULL)
+	if ((png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL)) == NULL) {
+		fclose(f);
 		return TTIP_LIBPNG_INIT_FAILED;
+	}
 
 	if ((info_ptr = png_create_info_struct(png_ptr)) == NULL) {
 		png_destroy_write_struct(&png_ptr, NULL);
+		fclose(f);
 		return TTIP_LIBPNG_INIT_FAILED;
 	}
 
@@ -89,11 +92,14 @@ ttip_result_t ttip_loadpng(ttip_image_t* output, const char* filename) {
 	if ((f = fopen(filename, "rb")) == NULL)
 		return errno;
 
-	if ((png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL)) == NULL)
+	if ((png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL)) == NULL) {
+		fclose(f);
 		return TTIP_LIBPNG_INIT_FAILED;
+	}
 
 	if ((info_ptr = png_create_info_struct(png_ptr)) == NULL) {
 		png_destroy_read_struct(&png_ptr, NULL, NULL);
+		fclose(f);
 		return TTIP_LIBPNG_INIT_FAILED;
 	}
 

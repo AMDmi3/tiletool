@@ -100,12 +100,12 @@ int process_output(int x, int y, int zoom, ttip_image_t tile) {
 			ttip_image_t temp;
 			if ((res = ttip_maskblend(&temp, tile, overlay)) == TTIP_OK) {
 				ttip_destroy(&tile);
-				ttip_destroy(&overlay);
 				tile = temp;
 			} else {
 				warnx("Could not blend overlay %s: %s", overlay_path, ttip_strerror(res));
 				had_error = 1;
 			}
+			ttip_destroy(&overlay);
 		} else if (res != ENOENT) {
 			warnx("Could not open overlay tile %s: %s", overlay_path, ttip_strerror(res));
 			had_error = 1;
