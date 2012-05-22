@@ -31,24 +31,33 @@ ttip_result_t ttip_savepng(ttip_image_t source, const char* filename, int level)
 	png_structp png_ptr;
 	png_infop info_ptr;
 
-	if ((f = fopen(filename, "wb")) == NULL)
+	/* generate temporary filename */
+	char tmpfilename[strlen(filename) + 4 + 1];
+	strcpy(tmpfilename, filename);
+	strcat(tmpfilename, ".tmp");
+
+	/* open file and init png writing */
+	if ((f = fopen(tmpfilename, "wb")) == NULL)
 		return errno;
 
 	if ((png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL)) == NULL) {
 		fclose(f);
+		unlink(tmpfilename);
 		return TTIP_LIBPNG_INIT_FAILED;
 	}
 
 	if ((info_ptr = png_create_info_struct(png_ptr)) == NULL) {
 		png_destroy_write_struct(&png_ptr, NULL);
 		fclose(f);
+		unlink(tmpfilename);
 		return TTIP_LIBPNG_INIT_FAILED;
 	}
 
 	if (setjmp(png_jmpbuf(png_ptr))) {
+		/* we get here from libpng errors */
 		png_destroy_write_struct(&png_ptr, &info_ptr);
 		fclose(f);
-		unlink(filename);
+		unlink(tmpfilename);
 		return TTIP_LIBPNG_ERROR;
 	}
 
@@ -67,14 +76,23 @@ ttip_result_t ttip_savepng(ttip_image_t source, const char* filename, int level)
 
 	png_write_info(png_ptr, info_ptr);
 
+	/* write pixel data */
 	png_bytep row;
 	for (row = source->data; row < source->data + source->stride * source->height; row += source->stride)
 		png_write_row(png_ptr, row);
 
+	/* cleanup */
 	png_write_end(png_ptr, NULL);
 
 	png_destroy_write_struct(&png_ptr, &info_ptr);
 	fclose(f);
+
+	/* rename temporary file, possibly overwriting old tile */
+	if (rename(tmpfilename, filename) != 0) {
+		int saved_errno = errno;
+		unlink(tmpfilename);
+		return saved_errno;
+	}
 
 	return TTIP_OK;
 #else
@@ -89,6 +107,7 @@ ttip_result_t ttip_loadpng(ttip_image_t* output, const char* filename) {
 	png_infop info_ptr;
 	struct ttip_image* destination = NULL;
 
+	/* open file and init png reading */
 	if ((f = fopen(filename, "rb")) == NULL)
 		return errno;
 
@@ -104,6 +123,7 @@ ttip_result_t ttip_loadpng(ttip_image_t* output, const char* filename) {
 	}
 
 	if (setjmp(png_jmpbuf(png_ptr))) {
+		/* we get here from libpng errors */
 		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 		fclose(f);
 		if (destination != NULL)
@@ -142,11 +162,13 @@ ttip_result_t ttip_loadpng(ttip_image_t* output, const char* filename) {
 
 	assert(destination->stride >= (int)png_get_rowbytes(png_ptr, info_ptr));
 
+	/* read pixel data */
 	png_bytep row;
 	for (row = destination->data; row < destination->data + destination->stride * destination->height; row += destination->stride)
 		png_read_row(png_ptr, row, NULL);
 
-    png_read_end(png_ptr, NULL);
+	/* cleanup */
+	png_read_end(png_ptr, NULL);
 	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 	fclose(f);
 
