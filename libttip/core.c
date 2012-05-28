@@ -101,3 +101,9 @@ int ttip_getheight(ttip_image_t tile) {
 ttip_format_t ttip_getformat(ttip_image_t tile) {
 	return tile->format;
 }
+
+int ttip_issameformat(ttip_image_t a, ttip_image_t b) {
+	return a->width == b->width &&
+		a->height == b->height &&
+		a->format == b->format;
+}

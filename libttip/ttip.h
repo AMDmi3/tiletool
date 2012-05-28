@@ -76,6 +76,8 @@ int ttip_getwidth(ttip_image_t tile);
 int ttip_getheight(ttip_image_t tile);
 ttip_format_t ttip_getformat(ttip_image_t tile);
 
+int ttip_issameformat(ttip_image_t a, ttip_image_t b);
+
 /* lowlevel pixel operations */
 void ttip_setpixel(ttip_image_t tile, unsigned int x, unsigned int y, ttip_color_t color);
 ttip_color_t ttip_getpixel(ttip_image_t tile, unsigned int x, unsigned int y);

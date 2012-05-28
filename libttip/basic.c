@@ -29,7 +29,7 @@ ttip_result_t ttip_clear(ttip_image_t target) {
 }
 
 ttip_result_t ttip_copy(ttip_image_t target, ttip_image_t source) {
-	if (target->width != source->width || target->height != source->height || target->format != source->format)
+	if (!ttip_issameformat(target, source))
 		return TTIP_IMAGE_FORMAT_MISMATCH;
 
 	if (source->stride == target->stride) {
