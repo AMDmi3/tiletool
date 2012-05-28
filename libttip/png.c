@@ -160,7 +160,7 @@ ttip_result_t ttip_loadpng(ttip_image_t* output, const char* filename) {
 		return TTIP_IMAGE_FORMAT_NOT_SUPPORTED;
 	}
 
-	assert(destination->stride >= (int)png_get_rowbytes(png_ptr, info_ptr));
+	assert(destination->stride >= png_get_rowbytes(png_ptr, info_ptr));
 
 	/* read pixel data */
 	png_bytep row;

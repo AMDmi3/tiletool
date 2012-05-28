@@ -65,7 +65,7 @@ typedef struct ttip_image* ttip_image_t;
 typedef unsigned int ttip_color_t;
 
 /* tile creation and destruction */
-ttip_result_t ttip_create(ttip_image_t* output, int width, int height, ttip_format_t format);
+ttip_result_t ttip_create(ttip_image_t* output, unsigned int width, unsigned int height, ttip_format_t format);
 void ttip_destroy(ttip_image_t* tile);
 
 /* error handling */
@@ -77,8 +77,8 @@ int ttip_getheight(ttip_image_t tile);
 ttip_format_t ttip_getformat(ttip_image_t tile);
 
 /* lowlevel pixel operations */
-void ttip_setpixel(ttip_image_t tile, int x, int y, ttip_color_t color);
-ttip_color_t ttip_getpixel(ttip_image_t tile, int x, int y);
+void ttip_setpixel(ttip_image_t tile, unsigned int x, unsigned int y, ttip_color_t color);
+ttip_color_t ttip_getpixel(ttip_image_t tile, unsigned int x, unsigned int y);
 
 /* basic operations */
 ttip_result_t ttip_clear(ttip_image_t target);

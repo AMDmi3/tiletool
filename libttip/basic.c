@@ -38,7 +38,7 @@ ttip_result_t ttip_copy(ttip_image_t target, ttip_image_t source) {
 		/* copy by-row, if strides do not match */
 		unsigned char* src = source->data;
 		unsigned char* dst = target->data;
-		int row;
+		unsigned int row;
 		for (row = 0; row < source->height; row++) {
 			memcpy(dst, src, source->width * ttip_getbpp(source->format));
 			src += source->stride;

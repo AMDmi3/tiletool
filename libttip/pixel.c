@@ -19,15 +19,15 @@
 
 #include <ttip_int.h>
 
-void ttip_setpixel(ttip_image_t tile, int x, int y, ttip_color_t color) {
-	if (x < 0 || x >= tile->width || y < 0 || y >= tile->height)
+void ttip_setpixel(ttip_image_t tile, unsigned int x, unsigned int y, ttip_color_t color) {
+	if (x >= tile->width || y >= tile->height)
 		return;
 
 	ttip_writepixel(tile->data + tile->stride * y + ttip_getbpp(tile->format) * x, color, tile->format);
 }
 
-ttip_color_t ttip_getpixel(ttip_image_t tile, int x, int y) {
-	if (x < 0 || x >= tile->width || y < 0 || y >= tile->height)
+ttip_color_t ttip_getpixel(ttip_image_t tile, unsigned int x, unsigned int y) {
+	if (x >= tile->width || y >= tile->height)
 		return 0;
 
 	return ttip_readpixel(tile->data + tile->stride * y + ttip_getbpp(tile->format) * x, tile->format);

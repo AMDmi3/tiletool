@@ -28,11 +28,11 @@
 
 /* tile structure */
 struct ttip_image {
-	int width;           /* width in pixels */
-	int height;          /* height in pixels */
-	int stride;          /* line stride in bytes */
-	ttip_format_t format;    /* pixel format */
-	unsigned char* data; /* data pointer */
+	unsigned int width;    /* width in pixels */
+	unsigned int height;   /* height in pixels */
+	unsigned int stride;   /* line stride in bytes */
+	ttip_format_t format;  /* pixel format */
+	unsigned char* data;   /* data pointer */
 };
 
 /* return number of bytes per pixel for format */

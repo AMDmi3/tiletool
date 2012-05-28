@@ -23,7 +23,7 @@
 
 #include <ttip_int.h>
 
-ttip_result_t ttip_create(ttip_image_t* output, int width, int height, ttip_format_t format) {
+ttip_result_t ttip_create(ttip_image_t* output, unsigned int width, unsigned int height, ttip_format_t format) {
 	if (width <= 0)
 		return TTIP_BAD_DIMENSIONS;
 
