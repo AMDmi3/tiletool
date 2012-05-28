@@ -179,3 +179,87 @@ ttip_result_t ttip_loadpng(ttip_image_t* output, const char* filename) {
 	return TTIP_NOT_COMPILED_IN;
 #endif
 }
+
+ttip_result_t ttip_loadpng_inplace(ttip_image_t target, const char* filename) {
+#if defined(WITH_PNG)
+	FILE* f;
+	png_structp png_ptr;
+	png_infop info_ptr;
+	struct ttip_image* destination = NULL;
+
+	/* open file and init png reading */
+	if ((f = fopen(filename, "rb")) == NULL)
+		return errno;
+
+	if ((png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL)) == NULL) {
+		fclose(f);
+		return TTIP_LIBPNG_INIT_FAILED;
+	}
+
+	if ((info_ptr = png_create_info_struct(png_ptr)) == NULL) {
+		png_destroy_read_struct(&png_ptr, NULL, NULL);
+		fclose(f);
+		return TTIP_LIBPNG_INIT_FAILED;
+	}
+
+	if (setjmp(png_jmpbuf(png_ptr))) {
+		/* we get here from libpng errors */
+		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+		fclose(f);
+		if (destination != NULL)
+			ttip_destroy(&destination);
+		return TTIP_LIBPNG_ERROR;
+	}
+
+	png_init_io(png_ptr, f);
+
+	png_read_info(png_ptr, info_ptr);
+
+	png_uint_32 width, height;
+	int bit_depth, color_type, interlace_method;
+
+	png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_method, 0, 0);
+
+	if (color_type == PNG_COLOR_TYPE_PALETTE)
+		png_set_palette_to_rgb(png_ptr);
+
+	png_read_update_info(png_ptr, info_ptr);
+	png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_method, 0, 0);
+
+	ttip_format_t format = 0;
+	switch (color_type) {
+	case PNG_COLOR_TYPE_GRAY: format = TTIP_GRAY; break;
+	case PNG_COLOR_TYPE_GRAY_ALPHA: format = TTIP_GRAY_ALPHA; break;
+	case PNG_COLOR_TYPE_RGB: format = TTIP_RGB; break;
+	case PNG_COLOR_TYPE_RGB_ALPHA: format = TTIP_RGB_ALPHA; break;
+	}
+
+	if (format == 0 || interlace_method != 0) {
+		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+		fclose(f);
+		return TTIP_IMAGE_FORMAT_NOT_SUPPORTED;
+	}
+
+	if (target->width != width || target->height != height || target->format != format) {
+		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+		fclose(f);
+		return TTIP_IMAGE_FORMAT_MISMATCH;
+	}
+
+	assert(target->stride >= png_get_rowbytes(png_ptr, info_ptr));
+
+	/* read pixel data */
+	png_bytep row;
+	for (row = target->data; row < target->data + target->stride * target->height; row += target->stride)
+		png_read_row(png_ptr, row, NULL);
+
+	/* cleanup */
+	png_read_end(png_ptr, NULL);
+	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+	fclose(f);
+
+	return TTIP_OK;
+#else
+	return TTIP_NOT_COMPILED_IN;
+#endif
+}

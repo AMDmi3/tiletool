@@ -88,6 +88,7 @@ ttip_result_t ttip_copy(ttip_image_t target, ttip_image_t source);
 ttip_result_t ttip_clone(ttip_image_t* output, ttip_image_t source);
 
 /* png input/output */
+ttip_result_t ttip_loadpng_inplace(ttip_image_t target, const char* filename);
 ttip_result_t ttip_loadpng(ttip_image_t* output, const char* filename);
 ttip_result_t ttip_savepng(ttip_image_t source, const char* filename, int level /* = 6 */);
 
