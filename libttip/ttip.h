@@ -80,15 +80,16 @@ ttip_format_t ttip_getformat(ttip_image_t tile);
 void ttip_setpixel(ttip_image_t tile, int x, int y, ttip_color_t color);
 ttip_color_t ttip_getpixel(ttip_image_t tile, int x, int y);
 
-/* hilevel pixel operations */
+/* basic operations */
 ttip_result_t ttip_clear(ttip_image_t target);
+ttip_result_t ttip_copy(ttip_image_t target, ttip_image_t source);
+ttip_result_t ttip_clone(ttip_image_t* output, ttip_image_t source);
 
 /* png input/output */
 ttip_result_t ttip_loadpng(ttip_image_t* output, const char* filename);
 ttip_result_t ttip_savepng(ttip_image_t source, const char* filename, int level /* = 6 */);
 
 /* transformations */
-ttip_result_t ttip_clone(ttip_image_t* output, ttip_image_t source);
 ttip_result_t ttip_desaturate(ttip_image_t* output, ttip_image_t source);
 ttip_result_t ttip_downsample2x2(ttip_image_t* output, ttip_image_t topleft, ttip_image_t topright, ttip_image_t bottomleft, ttip_image_t bottomright);
 ttip_result_t ttip_maskblend(ttip_image_t* output, ttip_image_t background, ttip_image_t overlay);

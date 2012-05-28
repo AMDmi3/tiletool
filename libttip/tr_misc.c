@@ -21,28 +21,37 @@
 
 #include <ttip_int.h>
 
-ttip_result_t ttip_clone(ttip_image_t* output, ttip_image_t source) {
-	/* allocate tile */
-	int ret;
-	struct ttip_image* destination;
-   	if ((ret = ttip_create(&destination, source->width, source->height, source->format)) != TTIP_OK)
-		return ret;
+ttip_result_t ttip_copy(ttip_image_t target, ttip_image_t source) {
+	if (target->width != source->width || target->height != source->height || target->format != source->format)
+		return TTIP_IMAGE_FORMAT_MISMATCH;
 
-	if (source->stride == destination->stride) {
-		memcpy(destination->data, source->data, source->height * source->stride);
+	if (source->stride == target->stride) {
+		memcpy(target->data, source->data, source->height * source->stride);
 	} else {
 		/* copy by-row, if strides do not match */
 		unsigned char* src = source->data;
-		unsigned char* dst = destination->data;
+		unsigned char* dst = target->data;
 		int row;
 		for (row = 0; row < source->height; row++) {
 			memcpy(dst, src, source->width * ttip_getbpp(source->format));
 			src += source->stride;
-			dst += destination->stride;
+			dst += target->stride;
 		}
+	}
+}
+
+ttip_result_t ttip_clone(ttip_image_t* output, ttip_image_t source) {
+	/* allocate tile */
+	int ret;
+	struct ttip_image* destination;
+	if ((ret = ttip_create(&destination, source->width, source->height, source->format)) != TTIP_OK)
+		return ret;
+
+	if ((ret != ttip_copy(destination, source)) != TTIP_OK) {
+		ttip_destroy(&destination);
+		return ret;
 	}
 
 	*output = destination;
-
 	return TTIP_OK;
 }
