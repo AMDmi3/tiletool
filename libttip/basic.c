@@ -17,87 +17,48 @@
  * along with libttip.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <errno.h>
-#include <stdlib.h>
+#include <memory.h>
 #include <string.h>
 
 #include <ttip_int.h>
 
-ttip_result_t ttip_create(ttip_image_t* output, int width, int height, ttip_format_t format) {
-	if (width <= 0)
-		return TTIP_BAD_DIMENSIONS;
-
-	if (height <= 0)
-		return TTIP_BAD_DIMENSIONS;
-
-	if (ttip_getbpp(format) == 0)
-		return TTIP_BAD_PIXEL_FORMAT;
-
-	size_t stridesize = ttip_alignstride(width * ttip_getbpp(format));
-
-	struct ttip_image* newtile = malloc(sizeof(struct ttip_image));
-	if (newtile == NULL)
-		return errno;
-
-	unsigned char* data = malloc(stridesize * height);
-	if (data == NULL) {
-		int saved_errno = errno;
-		free(newtile);
-		return saved_errno;
-	}
-
-	newtile->width = width;
-	newtile->height = height;
-	newtile->stride = stridesize;
-	newtile->format = format;
-	newtile->data = data;
-
-	*output = newtile;
+ttip_result_t ttip_clear(ttip_image_t target) {
+	memset(target->data, 0, target->stride * target->height);
 
 	return TTIP_OK;
 }
 
-void ttip_destroy(ttip_image_t* tile) {
-	if (*tile != NULL) {
-		free((*tile)->data);
-		free(*tile);
-		*tile = NULL;
+ttip_result_t ttip_copy(ttip_image_t target, ttip_image_t source) {
+	if (target->width != source->width || target->height != source->height || target->format != source->format)
+		return TTIP_IMAGE_FORMAT_MISMATCH;
+
+	if (source->stride == target->stride) {
+		memcpy(target->data, source->data, source->height * source->stride);
+	} else {
+		/* copy by-row, if strides do not match */
+		unsigned char* src = source->data;
+		unsigned char* dst = target->data;
+		int row;
+		for (row = 0; row < source->height; row++) {
+			memcpy(dst, src, source->width * ttip_getbpp(source->format));
+			src += source->stride;
+			dst += target->stride;
+		}
 	}
 }
 
-const char* ttip_strerror(ttip_result_t error) {
-	switch (error) {
-	case TTIP_LIBPNG_INIT_FAILED:
-		return "Libpng initialization failed";
-	case TTIP_LIBPNG_ERROR:
-		return "Error during libpng input/output";
-	case TTIP_NOT_IMPLEMENTED:
-		return "Functionality not (yet) implemented";
-	case TTIP_IMAGE_FORMAT_NOT_SUPPORTED:
-		return "Image format not supported";
-	case TTIP_NOT_COMPILED_IN:
-		return "Feature not compiled in";
-	case TTIP_BAD_DIMENSIONS:
-		return "Bad image demensions";
-	case TTIP_BAD_PIXEL_FORMAT:
-		return "Bad pixel format";
-	case TTIP_IMAGE_FORMAT_MISMATCH:
-		return "Image format mismatch";
-	case TTIP_EVEN_DIMENSIONS_REQUIRED:
-		return "Even dimensions required";
-	default:
-		return strerror(error);
+ttip_result_t ttip_clone(ttip_image_t* output, ttip_image_t source) {
+	/* allocate tile */
+	int ret;
+	struct ttip_image* destination;
+	if ((ret = ttip_create(&destination, source->width, source->height, source->format)) != TTIP_OK)
+		return ret;
+
+	if ((ret != ttip_copy(destination, source)) != TTIP_OK) {
+		ttip_destroy(&destination);
+		return ret;
 	}
-}
 
-int ttip_getwidth(ttip_image_t tile) {
-	return tile->width;
-}
-
-int ttip_getheight(ttip_image_t tile) {
-	return tile->height;
-}
-
-ttip_format_t ttip_getformat(ttip_image_t tile) {
-	return tile->format;
+	*output = destination;
+	return TTIP_OK;
 }

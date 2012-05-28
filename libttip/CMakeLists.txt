@@ -26,13 +26,12 @@ SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
 # sources
 SET(TTIP_SRCS
 	basic.c
-	fill.c
-	png.c
+	core.c
 	pixel.c
+	png.c
 	tr_desaturate.c
 	tr_downsample2x2.c
 	tr_maskblend.c
-	tr_misc.c
 	tr_threshold.c
 )
 
