@@ -45,6 +45,8 @@ ttip_result_t ttip_copy(ttip_image_t target, ttip_image_t source) {
 			dst += target->stride;
 		}
 	}
+
+	return TTIP_OK;
 }
 
 ttip_result_t ttip_clone(ttip_image_t* output, ttip_image_t source) {
