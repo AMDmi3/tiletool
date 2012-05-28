@@ -94,9 +94,6 @@ ttip_result_t ttip_downsample2x2(ttip_image_t* output, ttip_image_t topleft, tti
 ttip_result_t ttip_maskblend(ttip_image_t* output, ttip_image_t background, ttip_image_t overlay);
 ttip_result_t ttip_threshold(ttip_image_t* output, ttip_image_t source, int value);
 
-/* path handling */
-//ttip_result_t ttip_path_sprintf(char* buffer, size_t size, int zoom, int x, int y);
-
 #ifdef __cplusplus
 }
 #endif
