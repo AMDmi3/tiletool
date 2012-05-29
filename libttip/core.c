@@ -107,3 +107,8 @@ int ttip_issameformat(ttip_image_t a, ttip_image_t b) {
 		a->height == b->height &&
 		a->format == b->format;
 }
+
+int ttip_issamedimension(ttip_image_t a, ttip_image_t b) {
+	return a->width == b->width &&
+		a->height == b->height;
+}
