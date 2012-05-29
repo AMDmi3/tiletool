@@ -94,7 +94,9 @@ ttip_result_t ttip_loadpng(ttip_image_t* output, const char* filename);
 ttip_result_t ttip_savepng(ttip_image_t source, const char* filename, int level /* = 6 */);
 
 /* transformations */
+ttip_result_t ttip_desaturate_inplace(ttip_image_t target, ttip_image_t source);
 ttip_result_t ttip_desaturate(ttip_image_t* output, ttip_image_t source);
+
 ttip_result_t ttip_downsample2x2(ttip_image_t* output, ttip_image_t topleft, ttip_image_t topright, ttip_image_t bottomleft, ttip_image_t bottomright);
 ttip_result_t ttip_maskblend(ttip_image_t* output, ttip_image_t background, ttip_image_t overlay);
 ttip_result_t ttip_threshold(ttip_image_t* output, ttip_image_t source, int value);
