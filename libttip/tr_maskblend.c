@@ -18,6 +18,7 @@
  */
 
 #include <errno.h>
+#include <assert.h>
 
 #include <ttip_int.h>
 
@@ -28,28 +29,22 @@ ttip_result_t ttip_maskblend(ttip_image_t* output, ttip_image_t background, ttip
 	if (background->height != overlay->height)
 		return TTIP_IMAGE_DIMENSIONS_MISMATCH;
 
-	switch (background->format) {
-	case TTIP_GRAY:
-		if (overlay->format != TTIP_GRAY_ALPHA)
-			return TTIP_IMAGE_FORMAT_MISMATCH;
-		break;
-	case TTIP_RGB:
-		if (overlay->format != TTIP_RGB_ALPHA)
-			return TTIP_IMAGE_FORMAT_MISMATCH;
-		break;
-	default:
+	if (background->format != TTIP_GRAY && background->format != TTIP_RGB)
 		return TTIP_BAD_PIXEL_FORMAT;
-	}
+
+	if (overlay->format != TTIP_GRAY_ALPHA && overlay->format != TTIP_RGB_ALPHA)
+		return TTIP_BAD_PIXEL_FORMAT;
 
 	/* allocate tile */
 	int ret;
 	struct ttip_image* destination;
-   	if ((ret = ttip_create(&destination, background->width, background->height, background->format)) != TTIP_OK)
+	int output_format = (background->format == TTIP_GRAY && overlay->format == TTIP_GRAY_ALPHA) ? TTIP_GRAY : TTIP_RGB;
+	if ((ret = ttip_create(&destination, background->width, background->height, output_format)) != TTIP_OK)
 		return ret;
 
 	/* process */
 	unsigned char *bgrow, *ovrrow, *dstrow, *bg, *ovr, *dst;
-	if (background->format == TTIP_GRAY) {
+	if (background->format == TTIP_GRAY && overlay->format == TTIP_GRAY_ALPHA) {
 		for (bgrow = background->data, ovrrow = overlay->data, dstrow = destination->data;
 				bgrow < background->data + background->height * background->stride;
 				bgrow += background->stride, ovrrow += overlay->stride, dstrow += destination->stride) {
@@ -59,7 +54,33 @@ ttip_result_t ttip_maskblend(ttip_image_t* output, ttip_image_t background, ttip
 				dst[0] = (bg[0] * (255 - ovr[1]) + ovr[0] * ovr[1]) / 255;
 			}
 		}
-	} else if (background->format == TTIP_RGB) {
+	} else if (background->format == TTIP_GRAY && overlay->format == TTIP_RGB_ALPHA) {
+		for (bgrow = background->data, ovrrow = overlay->data, dstrow = destination->data;
+				bgrow < background->data + background->height * background->stride;
+				bgrow += background->stride, ovrrow += overlay->stride, dstrow += destination->stride) {
+			for (bg = bgrow, ovr = ovrrow, dst = dstrow;
+					bg < bgrow + background->width;
+					bg ++, ovr += 4, dst += 3) {
+				int background_component = bg[0] * (255 - ovr[3]);
+				dst[0] = (background_component + ovr[0] * ovr[3]) / 255;
+				dst[1] = (background_component + ovr[1] * ovr[3]) / 255;
+				dst[2] = (background_component + ovr[2] * ovr[3]) / 255;
+			}
+		}
+	} else if (background->format == TTIP_RGB && overlay->format == TTIP_GRAY_ALPHA) {
+		for (bgrow = background->data, ovrrow = overlay->data, dstrow = destination->data;
+				bgrow < background->data + background->height * background->stride;
+				bgrow += background->stride, ovrrow += overlay->stride, dstrow += destination->stride) {
+			for (bg = bgrow, ovr = ovrrow, dst = dstrow;
+					bg < bgrow + background->width * 3;
+					bg += 3, ovr += 2, dst += 3) {
+				int overlay_component = ovr[0] * ovr[1];
+				dst[0] = (bg[0] * (255 - ovr[1]) + overlay_component) / 255;
+				dst[1] = (bg[1] * (255 - ovr[1]) + overlay_component) / 255;
+				dst[2] = (bg[2] * (255 - ovr[1]) + overlay_component) / 255;
+			}
+		}
+	} else if (background->format == TTIP_RGB && overlay->format == TTIP_RGB_ALPHA) {
 		for (bgrow = background->data, ovrrow = overlay->data, dstrow = destination->data;
 				bgrow < background->data + background->height * background->stride;
 				bgrow += background->stride, ovrrow += overlay->stride, dstrow += destination->stride) {
@@ -71,6 +92,8 @@ ttip_result_t ttip_maskblend(ttip_image_t* output, ttip_image_t background, ttip
 				dst[2] = (bg[2] * (255 - ovr[3]) + ovr[2] * ovr[3]) / 255;
 			}
 		}
+	} else {
+		assert(0);
 	}
 
 	*output = destination;
