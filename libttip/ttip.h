@@ -48,8 +48,9 @@ typedef enum {
 	TTIP_BAD_PIXEL_FORMAT = -7,
 	TTIP_IMAGE_FORMAT_MISMATCH = -8,
 	TTIP_EVEN_DIMENSIONS_REQUIRED = -9,
+	TTIP_IMAGE_DIMENSIONS_MISMATCH = -10,
 
-	TTIP_LAST_ERROR = -9,
+	TTIP_LAST_ERROR = -10,
 } ttip_result_t;
 
 /* opaque type for single tile */

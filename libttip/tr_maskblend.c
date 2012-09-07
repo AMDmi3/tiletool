@@ -23,10 +23,10 @@
 
 ttip_result_t ttip_maskblend(ttip_image_t* output, ttip_image_t background, ttip_image_t overlay) {
 	if (background->width != overlay->width)
-		return TTIP_IMAGE_FORMAT_MISMATCH;
+		return TTIP_IMAGE_DIMENSIONS_MISMATCH;
 
 	if (background->height != overlay->height)
-		return TTIP_IMAGE_FORMAT_MISMATCH;
+		return TTIP_IMAGE_DIMENSIONS_MISMATCH;
 
 	switch (background->format) {
 	case TTIP_GRAY:

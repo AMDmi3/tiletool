@@ -85,6 +85,8 @@ const char* ttip_strerror(ttip_result_t error) {
 		return "Image format mismatch";
 	case TTIP_EVEN_DIMENSIONS_REQUIRED:
 		return "Even dimensions required";
+	case TTIP_IMAGE_DIMENSIONS_MISMATCH:
+		return "Image dimensions mismatch";
 	default:
 		return strerror(error);
 	}
