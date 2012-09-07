@@ -230,7 +230,7 @@ int main(int argc, char **argv) {
 			if (pass != iterations)
 				ttip_destroy(&destination);
 		}
-		end_benchmark(&begin, "ttip_downsample2x2:", iterations);
+		end_benchmark(&begin, "ttip_downsample2x2", iterations);
 		gc_tile(destination);
 
 		if ((ret = ttip_savepng(destination, argv[5], 6)) != TTIP_OK)
