@@ -53,11 +53,11 @@ ttip_result_t ttip_downsample2x2(ttip_image_t* output, ttip_image_t topleft, tti
 	ttip_image_t arr[4] = { topleft, topright, bottomleft, bottomright };
 	int i;
 	for (i = 1; i < 4; ++i) {
-		if (arr[1]->width != arr[0]->width)
+		if (arr[i]->width != arr[0]->width)
 			return TTIP_IMAGE_DIMENSIONS_MISMATCH;
-		if (arr[1]->height != arr[0]->height)
+		if (arr[i]->height != arr[0]->height)
 			return TTIP_IMAGE_DIMENSIONS_MISMATCH;
-		if (arr[1]->format != arr[0]->format)
+		if (arr[i]->format != arr[0]->format)
 			return TTIP_IMAGE_FORMAT_MISMATCH;
 	}
 
