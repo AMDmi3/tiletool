@@ -20,10 +20,16 @@
 #ifndef PATHS_H
 #define PATHS_H
 
-#include <sys/stat.h>
-#include <stdio.h>
 #include <errno.h>
+#include <stdio.h>
 #include <string.h>
+#include <sys/stat.h>
+
+/* windows has different mkdir() in different include file */
+#ifdef __WIN32__
+#	include <io.h>
+#	define mkdir(a, b) mkdir(a)
+#endif
 
 char* get_tile_path_r(char* buffer, size_t size, const char* prefix, int x, int y, int zoom, const char* suffix) {
 	if (snprintf(buffer, size, "%s/%d/%d/%d%s", prefix, zoom, x, y, suffix) >= (int)size)
