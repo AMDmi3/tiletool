@@ -34,16 +34,16 @@ ENDIF(WIN32)
 
 # sources
 SET(TILETOOL_SRCS
-	tiletool/bounds.c
-	tiletool/emptytile.c
-	tiletool/parsing.c
-	tiletool/process.c
-	tiletool/tiletool.c
-	tiletool/paths.c
+	utils/tiletool/bounds.c
+	utils/tiletool/emptytile.c
+	utils/tiletool/parsing.c
+	utils/tiletool/process.c
+	utils/tiletool/tiletool.c
+	utils/tiletool/paths.c
 )
 
 SET(TILECONVERT_SRCS
-	tileconvert/tileconvert.c
+	utils/tileconvert/tileconvert.c
 )
 
 # targets
@@ -73,18 +73,18 @@ IF(WITH_TESTS)
 	ADD_TEST(errors errors_test)
 
 	# tiletool internals tests
-	INCLUDE_DIRECTORIES(tiletool)
+	INCLUDE_DIRECTORIES(utils/tiletool)
 
-	ADD_EXECUTABLE(parsing_test tests/parsing.c tiletool/parsing.c)
+	ADD_EXECUTABLE(parsing_test tests/parsing.c utils/tiletool/parsing.c)
 	ADD_TEST(parsing parsing_test)
 
-	ADD_EXECUTABLE(bounds_test tests/bounds.c tiletool/bounds.c tiletool/parsing.c)
+	ADD_EXECUTABLE(bounds_test tests/bounds.c utils/tiletool/bounds.c utils/tiletool/parsing.c)
 	ADD_TEST(bounds bounds_test)
 
-	ADD_EXECUTABLE(paths_test tests/paths.c tiletool/paths.c)
+	ADD_EXECUTABLE(paths_test tests/paths.c utils/tiletool/paths.c)
 	ADD_TEST(paths paths_test)
 
-	ADD_EXECUTABLE(process_test tests/process.c tiletool/process.c)
+	ADD_EXECUTABLE(process_test tests/process.c utils/tiletool/process.c)
 	ADD_TEST(process process_test)
 ENDIF(WITH_TESTS)
 
