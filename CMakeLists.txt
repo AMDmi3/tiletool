@@ -20,25 +20,13 @@ ENDIF(NOT WIN32)
 
 ADD_DEFINITIONS(-std=c99)
 
-# sources
-SET(TILETOOL_SRCS
-	tiletool/bounds.c
-	tiletool/emptytile.c
-	tiletool/parsing.c
-	tiletool/process.c
-	tiletool/tiletool.c
-	tiletool/paths.c
-)
-
-SET(TILECONVERT_SRCS
-	tileconvert/tileconvert.c
-)
-
 # subdirs
 ADD_SUBDIRECTORY(tiletool)
 ADD_SUBDIRECTORY(tileconvert)
 
 IF(WITH_TESTS)
+	ENABLE_TESTING()
+
 	ADD_SUBDIRECTORY(tests)
 ENDIF(WITH_TESTS)
 

@@ -1,6 +1,3 @@
-# tests
-ENABLE_TESTING()
-
 # libttip tests
 ADD_EXECUTABLE(createdestroy_test createdestroy.c)
 TARGET_LINK_LIBRARIES(createdestroy_test ${TTIP_LIBRARIES})
