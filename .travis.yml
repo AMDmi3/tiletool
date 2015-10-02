@@ -1,0 +1,12 @@
+sudo: false
+language: c
+compiler:
+  - gcc
+  - clang
+addons:
+  apt:
+    packages:
+    - cmake
+script:
+  - cmake -DCMAKE_CXX_FLAGS="-Werror" .
+  - VERBOSE=1 make && make test
