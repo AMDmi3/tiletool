@@ -22,6 +22,7 @@
 #include <png.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 
 #include <ttip_int.h>
 
