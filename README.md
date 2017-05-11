@@ -1,5 +1,7 @@
 # tiletool
 
+[![Build Status](https://travis-ci.org/AMDmi3/tiletool.svg?branch=master)](https://travis-ci.org/AMDmi3/tiletool)
+
 A tool for processing pregenerated sets of digital map tiles.
 
 Each tile of lower zoom covers 4x more area, so it has 4x more features
