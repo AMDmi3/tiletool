@@ -105,7 +105,7 @@ Usage
         You may specify this option multiple times to provide fallback
         tilesets.
 
-    -o, --input=<INPUT TILESET>
+    -o, --output=<OUTPUT TILESET>
         Specify path to directory to store output tiles in. Required.
 
     -l, --overlay=<OVERLAY TILESET>
