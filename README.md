@@ -126,7 +126,6 @@ Options:
 ```
 
 ## Examples
-========
 
 1. For example, you have zoom 8 tiles in mapnik/ directory, and set
    of transparent tiles with captions in a captions/ directory. You may
