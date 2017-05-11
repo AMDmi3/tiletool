@@ -1,0 +1,11 @@
+language: cpp
+sudo: required
+dist: trusty
+compiler:
+  - gcc
+  - clang
+script:
+  - cmake -DCMAKE_C_FLAGS="-Werror" -DCMAKE_INSTALL_PREFIX=_prefix .
+  - VERBOSE=1 make
+  - make ARGS=-V test
+  - make install
