@@ -21,6 +21,7 @@
 #include <errno.h>
 #include <png.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #include <ttip_int.h>
