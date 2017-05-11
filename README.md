@@ -1,0 +1,167 @@
+# tiletool
+
+A tool for processing pregenerated sets of digital map tiles.
+
+Each tile of lower zoom covers 4x more area, so it has 4x more features
+and thus is 4x harder to render. Because of that, for some renderers
+lower zoom tiles are not frequently updated and/or contain much less
+features than higher zoom tiles, which is not really good. Main purpose
+of this utility is to fix or at least improve this situation, as it
+allows to render lowzoom tiles using higher zooms. It also allows to
+blend semitransparent overlays with the tileset, producing full-fledged
+map tiles without producing extra load on renderers.
+
+## Features
+
+- Generation of lower-level tiles from higher-level
+- Applying semitransparent overlays
+- Merging several tilesets together
+- Running arbitrary commands on tiles
+
+## Building
+
+Only required dependencies are cmake and libpng. To compile:
+
+    cmake . && make
+
+To run tests, after building run:
+
+    make test
+
+To install systemwide:
+
+    make install
+
+## Usage
+
+```
+tiletool <OPTIONS>
+
+Options:
+-0..-9
+    Set png compression level. Default is 2.
+
+-b, --input-bounds=<BBOX>
+    Limit processing with bounding box (implies same limit to
+    output).
+
+-B, --output-bounds=<BBOX>
+    Limit output with bounding box.
+
+    You may use -B when you need all tiles processed, but only
+    specific subset of tiles written.
+
+    There are two ways of specifying bounding boxes:
+
+      zoom/x/y
+        bbox is limited by tile with specified zoom and coordinates
+        for example, -b 8/0/0 is upper-leftmost tile at zoom 8.
+        Ranges are supported for x and y values, for example
+        -b 5/1-12/5-9
+
+      left,bottom,right,top
+        Usual bounding box in geographical coordinates. For example:
+
+        37.3,55.53,37.93,55.95 - approximate bbox for Moscow (Russia)
+
+-z, --input-zoom=<ZOOM or MINZOOM-MAXZOOM>
+    Specify which zoom (or zoom range) will be used for input tiles.
+
+-Z, --output-zoom=<ZOOM or MINZOOM-MAXZOOM>
+    Specify for which zoom (or zoom range) tiles will be generated.
+
+    One of above two options must be specified. If input zoom is not
+    specified, it's set to (max output zoom + 1). If output zoom is
+    not specified, it's set to 0-(min output zoom).
+
+    For example, if you have level 6 tiles and you need to generate
+    level 0-5 tiles based on it, you may either specify:
+
+    -z 6 -Z 0-5
+    -z 6        (output zoom is automatically set to 0-5)
+    -Z 0-5      (input zoom is automatically set to 6)
+
+    Ranges must not be adjascent, for example you may generate level 0
+    tile based on level 6 tiles:
+
+    -z 0 -Z 6
+
+-e, --empty-tile=<PATH>
+    Specify a file to be used instead of tiles which are not found in
+    the input set. You may omit it if your input tile set is complete,
+    but the process will fail if empty tile is not set and input tile
+    is missing.
+
+-j, --jobs=<N>
+    Set maximum number of spawned child processes. By default it is 0
+    and no child processes are spawned, all tiles are processed
+    sequentionally. If this is > 0, tile loading and merging is still
+    done sequentionally (this can't be paralleled), but overlay
+    loading/applying, and saving for each tile is done in a child
+    process. Note that -j 0 (no parallelization) is not the same as
+    -j 1 (one child).
+
+-i, --input=<INPUT TILESET>
+    Specify path to directory which contains input tiles.
+    You may specify this option multiple times to provide fallback
+    tilesets.
+
+-o, --output=<OUTPUT TILESET>
+    Specify path to directory to store output tiles in. Required.
+
+-l, --overlay=<OVERLAY TILESET>
+    Specify path to overlay which will be blended with output tiles.
+    You may specify this option multiple times to use multiple
+    overlays.
+
+-c, --postcmd=<COMMAND>
+    Specify a command to be run on a newly saved tile. You may want to
+    set this to, for example, 'optipng -quiet -o1'.
+
+-v, --verbose
+    Increase verbosity.
+
+-h, --help
+    Display help on options.
+```
+
+## Examples
+========
+
+1. For example, you have zoom 8 tiles in mapnik/ directory, and set
+   of transparent tiles with captions in a captions/ directory. You may
+   generate all missing zooms (0-7) with the following command:
+
+       tiletool -z 8 -l captions -i mapnik -o output
+
+   resulting tiles will be saved in output/.
+
+2. Now, you have some tiles in the original tileset updated and you want
+   to only regenerate affected lowzoom tiles. Unfortunately, you need to
+   generate all lowzoom tiles from scratch (your previous output is
+   unuseable as it has overlay applied), but fortunately you don't need to
+   recreated unaffected tiles, thus though you need to walk whole tile tree,
+   most expensive operations (blending and png saving) will only be run on
+   updated tiles.
+
+   For example, Moscow fits into two tiles on z8, so if these are updated,
+   you should run:
+
+       tiletool -B 8/154/79-80 -z 8 -o captions -i mapnik -o output
+
+3. You may use optipng to optimized your tiles to save space & traffic:
+
+       tiletool -c 'optipng -quiet -o1' -z 8 -o captions -i mapnik -o output
+
+   You may also add -1 to spend less time compressing tiles that will
+   be recompressed anyway.
+
+## License
+
+GNU GPLv3+, see [COPYING](COPYING).
+
+Bundled libttip (image processing library) is licensed under LGPLv3+.
+
+## Author
+
+* [Dmitry Marakasov](https://github.com/AMDmi3) <amdmi3@amdmi3.ru>
